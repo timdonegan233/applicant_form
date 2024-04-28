@@ -15,6 +15,9 @@ const firebaseConfig = {
 
 let loginForm = firebase.database().ref("infos"); // Changed variable name to loginForm
 
+// Get a reference to the Firebase Storage
+let storageRef = firebase.storage().ref('images');
+
 document.querySelector('.login-form').addEventListener("submit", submitForm);
 
 function submitForm(e) {
@@ -34,65 +37,46 @@ function submitForm(e) {
     const phoneNumber = document.querySelector('.phoneNumber').value;
     const postZipCode = document.querySelector('.postZip').value;
     const city = document.querySelector('.city').value;
-    const image = document.querySelector('.image').value;
+    const imageFile = document.querySelector('.image').files[0]; // Get the selected image filee;
     console.log(firstName, lastName, gender,age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, image);
 
-    saveLoginInfo(
-            firstName, 
-            lastName,
-            gender,
-            age, 
-            dob,
-            email,
-            fianceFirstName,
-            fianceLastName,
-            address1,
-            address2,
-            areacode,
-            phoneNumber,
-            postZipCode,
-            city,
-            image
-        );
+ // Upload image to Firebase Storage
+ const imageRef = storageRef.child('images/' + imageFile.name);
+ imageRef.put(imageFile)
+     .then((snapshot) => {
+         // Get the URL of the uploaded image
+         return snapshot.ref.getDownloadURL();
+     })
+     .then((imageUrl) => {
+         // Save form data and image URL to Firebase Realtime Database
+         saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl);
 
-     // Reset the form inputs
-     document.querySelector('.login-form').reset();
+         // Reset the form inputs
+         document.querySelector('.login-form').reset();
+     })
+     .catch((error) => {
+         console.error("Error uploading image: ", error);
+     });
 }
 
-function saveLoginInfo(
-        firstName, 
-        lastName,
-        gender,
-        age, 
-        dob,
-        email,
-        fianceFirstName,
-        fianceLastName,
-        address1,
-        address2,
-        areacode,
-        phoneNumber,
-        postZipCode,
-        city,
-        image
-    ) {
-    const newLoginInfo = loginForm.push(); // Changed variable name to loginForm
+function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl) {
+ const newLoginInfo = database.push();
 
-    newLoginInfo.set({
-            firstName: firstName, 
-            lastName: lastName,
-            gender: gender,
-            age: age, 
-            dob: dob,
-            email: email,
-            fianceFirstName: fianceFirstName,
-            fianceLastName: fianceLastName,
-            address1: address1,
-            address2: address2,
-            areacode: areacode,
-            phoneNumber: phoneNumber,
-            postZipCode: postZipCode,
-            city: city,
-            image: image
-    });
+ newLoginInfo.set({
+     firstName: firstName,
+     lastName: lastName,
+     gender: gender,
+     age: age,
+     dob: dob,
+     email: email,
+     fianceFirstName: fianceFirstName,
+     fianceLastName: fianceLastName,
+     address1: address1,
+     address2: address2,
+     areacode: areacode,
+     phoneNumber: phoneNumber,
+     postZipCode: postZipCode,
+     city: city,
+     imageUrl: imageUrl // Save the URL of the uploaded image
+ });
 }
