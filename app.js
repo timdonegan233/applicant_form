@@ -16,7 +16,7 @@ const firebaseConfig = {
 let loginForm = firebase.database().ref("infos"); // Changed variable name to loginForm
 
 // Get a reference to the Firebase Storage
-let storageRef = firebase.storage().ref('images');
+let storageRef = firebase.storage().ref();
 
 document.querySelector('.login-form').addEventListener("submit", submitForm);
 
