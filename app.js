@@ -13,16 +13,14 @@ const firebaseConfig = {
   firebase.initializeApp(firebaseConfig);
 //   const db = firebase.firestore();
 
-let loginForm = firebase.database().ref("infos"); // Changed variable name to loginForm
-
-// Get a reference to the Firebase Storage
-let storageRef = firebase.storage().ref();
+let loginForm = firebase.database().ref("infos"); // Database reference
 
 document.querySelector('.login-form').addEventListener("submit", submitForm);
 
 function submitForm(e) {
     e.preventDefault();
 
+    // Get form input values
     const firstName = document.querySelector('.firstname').value;
     const lastName = document.querySelector('.lastname').value;
     const gender = document.querySelector('.gender').value;
@@ -37,46 +35,46 @@ function submitForm(e) {
     const phoneNumber = document.querySelector('.phoneNumber').value;
     const postZipCode = document.querySelector('.postZip').value;
     const city = document.querySelector('.city').value;
-    const imageFile = document.querySelector('.image').files[0]; // Get the selected image filee;
-    console.log(firstName, lastName, gender,age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, image);
+    const imageFile = document.querySelector('.image').files[0]; // Get the selected image file
+    console.log(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageFile);
 
- // Upload image to Firebase Storage
- const imageRef = storageRef.child('images/' + imageFile.name);
- imageRef.put(imageFile)
-     .then((snapshot) => {
-         // Get the URL of the uploaded image
-         return snapshot.ref.getDownloadURL();
-     })
-     .then((imageUrl) => {
-         // Save form data and image URL to Firebase Realtime Database
-         saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl);
+    // Upload image to Firebase Storage
+    const storageRef = firebase.storage().ref('images/' + imageFile.name); // Storage reference
+    storageRef.put(imageFile)
+        .then((snapshot) => {
+            // Get the URL of the uploaded image
+            return snapshot.ref.getDownloadURL();
+        })
+        .then((imageUrl) => {
+            // Save form data and image URL to Firebase Realtime Database
+            saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl);
 
-         // Reset the form inputs
-         document.querySelector('.login-form').reset();
-     })
-     .catch((error) => {
-         console.error("Error uploading image: ", error);
-     });
+            // Reset the form inputs
+            document.querySelector('.login-form').reset();
+        })
+        .catch((error) => {
+            console.error("Error uploading image: ", error);
+        });
 }
 
 function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl) {
- const newLoginInfo = database.push();
+    const newLoginInfo = loginForm.push();
 
- newLoginInfo.set({
-     firstName: firstName,
-     lastName: lastName,
-     gender: gender,
-     age: age,
-     dob: dob,
-     email: email,
-     fianceFirstName: fianceFirstName,
-     fianceLastName: fianceLastName,
-     address1: address1,
-     address2: address2,
-     areacode: areacode,
-     phoneNumber: phoneNumber,
-     postZipCode: postZipCode,
-     city: city,
-     imageUrl: imageUrl // Save the URL of the uploaded image
- });
+    newLoginInfo.set({
+        firstName: firstName,
+        lastName: lastName,
+        gender: gender,
+        age: age,
+        dob: dob,
+        email: email,
+        fianceFirstName: fianceFirstName,
+        fianceLastName: fianceLastName,
+        address1: address1,
+        address2: address2,
+        areacode: areacode,
+        phoneNumber: phoneNumber,
+        postZipCode: postZipCode,
+        city: city,
+        imageUrl: imageUrl // Save the URL of the uploaded image
+    });
 }
