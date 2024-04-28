@@ -26,6 +26,8 @@ function submitForm(e) {
     const age = document.querySelector('.age').value;
     const dob = document.querySelector('.dob').value;
     const email = document.querySelector('.email').value;
+    const fianceFirstName = document.querySelector('.fianceFirstname').value;
+    const fianceLastName = document.querySelector('.fianceLastname').value;
     const address1 = document.querySelector('.address1').value;
     const address2 = document.querySelector('.address2').value;
     const areacode = document.querySelector('.areacode').value;
@@ -33,7 +35,7 @@ function submitForm(e) {
     const postZipCode = document.querySelector('.postZip').value;
     const city = document.querySelector('.city').value;
     const image = document.querySelector('.image').value;
-    console.log(firstName, lastName, gender,age, dob, email, address1, address2, areacode, phoneNumber, postZipCode, city, image);
+    console.log(firstName, lastName, gender,age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, image);
 
     saveLoginInfo(
             firstName, 
@@ -42,6 +44,8 @@ function submitForm(e) {
             age, 
             dob,
             email,
+            fianceFirstName,
+            fianceLastName,
             address1,
             address2,
             areacode,
@@ -62,6 +66,8 @@ function saveLoginInfo(
         age, 
         dob,
         email,
+        fianceFirstName,
+        fianceLastName,
         address1,
         address2,
         areacode,
@@ -79,6 +85,8 @@ function saveLoginInfo(
             age: age, 
             dob: dob,
             email: email,
+            fianceFirstName: fianceFirstName,
+            fianceLastName: fianceLastName,
             address1: address1,
             address2: address2,
             areacode: areacode,
