@@ -14,11 +14,14 @@ const firebaseConfig = {
 //   const db = firebase.firestore();
 
 let loginForm = firebase.database().ref("infos"); // Database reference
+const form = document.querySelector('.formbold-form-wrapper');
+const formSuccess = document.querySelector('.form-submitted');
 
 document.querySelector('.login-form').addEventListener("submit", submitForm);
 
 function submitForm(e) {
     e.preventDefault();
+
 
     // Get form input values
     const firstName = document.querySelector('.firstname').value;
@@ -55,7 +58,15 @@ function submitForm(e) {
         .catch((error) => {
             console.error("Error uploading image: ", error);
         });
+
+        formSuccess.classList.add('display');
+        form.classList.add('hidden');
 }
+
+const formCloseButton = document.querySelector('.form-close').addEventListener('click', (e) => {
+    form.classList.remove('hidden');
+    formSuccess.classList.remove('display');
+});
 
 function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl) {
     const newLoginInfo = loginForm.push();
@@ -77,4 +88,6 @@ function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirst
         city: city,
         imageUrl: imageUrl // Save the URL of the uploaded image
     });
+
+
 }
