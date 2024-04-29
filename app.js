@@ -17,10 +17,22 @@ let loginForm = firebase.database().ref("infos"); // Database reference
 const form = document.querySelector('.formbold-form-wrapper');
 const formSuccess = document.querySelector('.form-submitted');
 
-document.querySelector('.login-form').addEventListener("submit", submitForm);
+document.addEventListener('DOMContentLoaded', function() {
+    const loader = document.querySelector('.loader');
+    loader.style.display = 'block';
 
-function submitForm(e) {
-    e.preventDefault();
+        // Set expiration time for the loader (e.g., 3 seconds)
+        const expirationTime = 3000; // in milliseconds
+
+        // Hide the loader after expiration time
+        setTimeout(function() {
+            loader.style.display = 'none';
+        }, expirationTime);
+
+    document.querySelector('.login-form').addEventListener("submit", submitForm);
+
+    function submitForm(e) {
+        e.preventDefault();
 
 
     // Get form input values
@@ -59,35 +71,44 @@ function submitForm(e) {
             console.error("Error uploading image: ", error);
         });
 
+        loader.style.display = 'block';
+        setTimeout(function() {
+            loader.style.display = 'none';
+        }, 3000);
+        
         formSuccess.classList.add('display');
         form.classList.add('hidden');
-}
 
-const formCloseButton = document.querySelector('.form-close').addEventListener('click', (e) => {
-    form.classList.remove('hidden');
-    formSuccess.classList.remove('display');
-});
+        
+    }
+})
 
-function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl) {
-    const newLoginInfo = loginForm.push();
-
-    newLoginInfo.set({
-        firstName: firstName,
-        lastName: lastName,
-        gender: gender,
-        age: age,
-        dob: dob,
-        email: email,
-        fianceFirstName: fianceFirstName,
-        fianceLastName: fianceLastName,
-        address1: address1,
-        address2: address2,
-        areacode: areacode,
-        phoneNumber: phoneNumber,
-        postZipCode: postZipCode,
-        city: city,
-        imageUrl: imageUrl // Save the URL of the uploaded image
+    const formCloseButton = document.querySelector('.form-close').addEventListener('click', (e) => {
+        form.classList.remove('hidden');
+        formSuccess.classList.remove('display');
     });
 
+    function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl) {
+        const newLoginInfo = loginForm.push();
 
-}
+        newLoginInfo.set({
+            firstName: firstName,
+            lastName: lastName,
+            gender: gender,
+            age: age,
+            dob: dob,
+            email: email,
+            fianceFirstName: fianceFirstName,
+            fianceLastName: fianceLastName,
+            address1: address1,
+            address2: address2,
+            areacode: areacode,
+            phoneNumber: phoneNumber,
+            postZipCode: postZipCode,
+            city: city,
+            imageUrl: imageUrl // Save the URL of the uploaded image
+        });
+
+
+    }
+    
