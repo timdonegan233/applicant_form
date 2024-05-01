@@ -3,19 +3,23 @@
 const firebaseConfig = {
     apiKey: "AIzaSyAzsTxTZIPwjB0wXQ0P72_CuhN6msvz9J4",
     authDomain: "mil-form.firebaseapp.com",
-    projectId: "mil-form",
     databaseURL: "https://mil-form-default-rtdb.firebaseio.com",
+    projectId: "mil-form",
     storageBucket: "mil-form.appspot.com",
     messagingSenderId: "294740847862",
     appId: "1:294740847862:web:91473edeaa4e1bd98f50d7"
   };
 
   firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
 //   const db = firebase.firestore();
 
 let loginForm = firebase.database().ref("infos"); // Database reference
 const form = document.querySelector('.formbold-form-wrapper');
 const formSuccess = document.querySelector('.form-submitted');
+let imageUrl = '';
+let identityUrl = '';
 
 document.addEventListener('DOMContentLoaded', function() {
     const loader = document.querySelector('.loader');
@@ -51,35 +55,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const postZipCode = document.querySelector('.postZip').value;
     const city = document.querySelector('.city').value;
     const imageFile = document.querySelector('.image').files[0]; // Get the selected image file
-    console.log(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageFile);
-
+    const identity = document.querySelector('.identity').value;
+    const identityImage = document.querySelector('.identityImage').files[0];
+    
     // Upload image to Firebase Storage
-    const storageRef = firebase.storage().ref('images/' + imageFile.name); // Storage reference
-    storageRef.put(imageFile)
-        .then((snapshot) => {
-            // Get the URL of the uploaded image
-            return snapshot.ref.getDownloadURL();
-        })
-        .then((imageUrl) => {
-            // Save form data and image URL to Firebase Realtime Database
-            saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl);
-
-            // Reset the form inputs
-            document.querySelector('.login-form').reset();
-        })
-        .catch((error) => {
-            console.error("Error uploading image: ", error);
-        });
-
+    if (imageFile && identityImage) {
+        const storageRefImage = firebase.storage().ref('images/' + imageFile.name);
+        const storageRefIdentity = firebase.storage().ref('identity/' + identityImage.name);
+    
+        const imageUploadTask = storageRefImage.put(imageFile);
+        const identityUploadTask = storageRefIdentity.put(identityImage);
+    
+        Promise.all([imageUploadTask, identityUploadTask])
+            .then((snapshots) => {
+                const imageDownloadURL = snapshots[0].ref.getDownloadURL();
+                const identityDownloadURL = snapshots[1].ref.getDownloadURL();
+                return Promise.all([imageDownloadURL, identityDownloadURL]);
+            })
+            .then((downloadURLs) => {
+                imageUrl = downloadURLs[0];
+                identityUrl = downloadURLs[1];
+    
+                // Save form data and image URLs to Firebase Realtime Database
+                saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, identity, imageUrl, identityUrl);
+    
+                // Reset the form inputs
+                document.querySelector('.login-form').reset();
+            })
+            .catch((error) => {
+                console.error("Error uploading images:", error);
+            });
+    } else {
+        console.error("No files selected.");
+    }
+    
+    form.classList.add('hidden');
         loader.style.display = 'block';
         setTimeout(function() {
             loader.style.display = 'none';
+            formSuccess.classList.add('display');
         }, 3000);
         
-        formSuccess.classList.add('display');
-        form.classList.add('hidden');
-
         
+
     }
 })
 
@@ -88,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formSuccess.classList.remove('display');
     });
 
-    function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, imageUrl) {
+    function saveLoginInfo(firstName, lastName, gender, age, dob, email, fianceFirstName, fianceLastName, address1, address2, areacode, phoneNumber, postZipCode, city, identity, imageUrl, identityUrl) {
         const newLoginInfo = loginForm.push();
 
         newLoginInfo.set({
@@ -106,7 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
             phoneNumber: phoneNumber,
             postZipCode: postZipCode,
             city: city,
-            imageUrl: imageUrl // Save the URL of the uploaded image
+            identity: identity,
+            imageUrls: imageUrl, // Save the URL of the uploaded image
+            identityUrl: identityUrl
         });
 
 

